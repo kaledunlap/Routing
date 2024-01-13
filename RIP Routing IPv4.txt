@@ -1,9 +1,8 @@
-Rip Routing with IPv4
+Rip Routing with IPv4:
 
-~Basic Router Config~
+Starting Router Config
 
 Router-A:
-
 enable
 config t
 no ip domain-lookup
@@ -25,7 +24,6 @@ no shutdown
 exit
 
 Router-B:
-
 enable
 config t
 no ip domain-lookup
@@ -47,7 +45,6 @@ no shutdown
 exit
 
 Router-C:
-
 enable
 config t
 no ip domain-lookup
@@ -68,10 +65,9 @@ ip address 204.15.5.33 255.255.255.240
 no shutdown
 exit
 
-~Configuring RIP (Distance Vector) Routing~
+Configuring RIP (Distance Vector) Routing:
 
 Router-A:
-
 config t
 router rip
 network 204.15.5.96
@@ -98,11 +94,9 @@ Save running config: #copy running-config startup-config
 
 Remove routing protocol: config# no router rip
 
-
-~Ripv2 Routing Protocol~
+Ripv2 Routing Protocol:
 
 Router-A:
-
 config t
 router rip
 version 2
@@ -112,7 +106,6 @@ network 204.15.5.64
 exit
 
 Router-B:
-
 config t
 router rip
 version 2
@@ -122,7 +115,6 @@ network 204.15.5.48
 exit
 
 Router-C:
-
 config t
 router rip
 version 2
