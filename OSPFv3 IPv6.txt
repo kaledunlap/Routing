@@ -1,6 +1,6 @@
-~Basic OSPFv3 for IPv6~
+Basic OSPFv3 for IPv6:
 
-Basic Config:
+Starting Config:
 R1:
 enable
 config t
@@ -86,7 +86,7 @@ end
 copy running-config startup-config
 
 
-OSPFv3 Assign router IDs:
+Assigning OSPFv3 Router IDs:
 
 R1:
 config t
@@ -169,7 +169,7 @@ ipv6 router ospf 1
 passive-interface default
 (^This makes all interfaces passive which does not allow routing information to be advertised)
 
-We fix by using the following commands:
+Fix by using the following commands:
 
 R2(config)#ipv6 router ospf 1
 R2(config-rtr)#no passive-interface s0/0/1
