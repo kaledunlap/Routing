@@ -1,4 +1,4 @@
-OSPF
+OSPF IPv4 Routing
 
 R1:
 enable
