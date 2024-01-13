@@ -1,0 +1,83 @@
+R1:
+enable
+config t
+no ip domain-lookup
+int g0/0 
+ip address 172.31.0.1 255.255.254.0
+no shut
+int s0/0/0
+ip address 172.31.4.1 255.255.255.252
+no shut
+exit
+router ospf 1
+router-id 1.1.1.1
+network 172.31.0.0 0.0.1.255 area 0
+network 172.31.4.0 0.0.0.3 area 0
+passive-interface g0/0
+end
+
+R2:
+enable
+config t
+no ip domain-lookup
+ipv6 unicast-routing
+int g0/0
+ip address 172.31.2.1 255.255.254.0
+ipv6 address 2001:DB8:1::1/64
+ipv6 address FE80::1 link-local
+no shut
+int s0/0/0
+ip address 172.31.4.2 255.255.255.252
+no shut
+int s0/0/1
+ipv6 address 2001:DB8:2::1/64
+no shut
+exit
+router ospf 1
+router-id 2.2.2.2
+network 172.31.4.0 0.0.0.3 area 0
+network 172.31.2.0 0.0.0.3 area 0
+passive-interface g0/0
+exit
+ipv6 router ospf 1
+router-id 2.2.2.2
+exit
+int g0/0
+ipv6 ospf 1 area 0
+int s0/0/1
+ipv6 ospf 1 area 0
+exit
+
+R3:
+enable
+config t
+no ip domain-lookup
+ipv6 unicast-routing
+int g0/0
+ipv6 address 2001:DB8:3::1/64
+ipv6 address FE80::3 link-local
+no shut
+int s0/0/0
+ipv6 address 2001:DB8:2::2/64
+no shut
+exit
+ipv6 router ospf 1
+router-id 3.3.3.3
+exit
+int g0/0
+ipv6 ospf 1 area 0
+int s0/0/0
+ipv6 ospf 1 area 0
+exit
+
+
+
+
+
+
+
+
+
+
+
+

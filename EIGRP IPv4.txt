@@ -1,0 +1,160 @@
+~EIGRP IPv4~
+
+Basic config for R1, R2, R3: 
+
+R1:
+enable
+config t
+hostname R1
+no ip domain-lookup
+enable password security
+line con 0
+logging synchronous
+password cyber
+line vty 0 5
+logging synchronous
+password cyber
+exit
+banner motd #Unauthorized Access is Prohibited#
+
+int g0/0
+ip address 192.168.1.1 255.255.255.0
+no shut
+int s0/0/0
+ip address 10.1.1.1 255.255.255.252
+no shut
+int s0/0/1
+ip address 10.3.3.1 255.255.255.252
+no shut
+end
+copy running-config startup-config
+
+R2:
+enable
+config t
+hostname R2
+no ip domain-lookup
+enable password security
+line con 0
+logging synchronous
+password cyber
+line vty 0 5
+logging synchronous
+password cyber
+exit
+banner motd #Unauthorized Access is Prohibited#
+
+int g0/0
+ip address 192.168.2.1 255.255.255.0
+no shut
+int s0/0/0
+ip address 10.1.1.2 255.255.255.252
+no shut
+int s0/0/1
+ip address 10.2.2.2 255.255.255.252
+no shut
+end
+copy running-config startup-config
+
+R3:
+enable
+config t
+hostname R3
+no ip domain-lookup
+enable password security
+line con 0
+logging synchronous
+password cyber
+line vty 0 5
+logging synchronous
+password cyber
+exit
+banner motd #Unauthorized Access is Prohibited#
+
+int g0/0
+ip address 192.168.3.1 255.255.255.0
+no shut
+int s0/0/0
+ip address 10.3.3.2 255.255.255.252
+no shut
+int s0/0/1
+ip address 10.2.2.1 255.255.255.252
+no shut
+end
+copy running-config startup-config
+
+
+Configure EIGRP to advertise the specific directly connected subnets:
+
+R1:
+config t
+router eigrp 10
+network 10.1.1.0 0.0.0.3
+network 192.168.1.0 0.0.0.255
+network 10.3.3.0 0.0.0.3
+exit
+
+R2:
+config t
+router eigrp 10
+network 10.2.2.0 0.0.0.3
+network 192.168.2.0 0.0.0.255
+network 10.1.1.0 0.0.0.3
+exit
+
+R3:
+config t
+router eigrp 10
+network 10.2.2.0 0.0.0.3
+network 192.168.3.0 0.0.0.255
+network 10.3.3.0 0.0.0.3
+exit
+
+
+Configure the LAN interfaces to not advertise EIGRP updates on all routers:
+
+R1:
+config t
+router eigrp 10
+passive-interface g0/0
+exit
+
+R2:
+config t
+router eigrp 10
+passive-interface g0/0
+exit
+
+R3:
+config t
+router eigrp 10
+passive-interface g0/0
+exit
+
+#show ip protocols 
+This will verify the passive interface configuration.
+
+Disabling auto summarization:
+
+R1:
+config t
+router eigrp 10
+no auto-summary
+exit
+
+R2:
+config t
+router eigrp 10
+no auto-summary
+exit
+
+R3:
+config t
+router eigrp 10
+no auto-summary
+exit
+
+
+
+
+

@@ -1,0 +1,157 @@
+Interface Addressing:
+REMOTE:
+enable
+config t
+no ip domain-lookup
+int s0/0/0
+ip address 209.165.201.2 255.255.255.252
+no shut
+int g0/0
+ip address 192.168.20.1 255.255.255.0
+no shut
+exit
+
+BRANCH:
+enable
+config t
+no ip domain-lookup
+int s0/0/0
+ip address 209.165.201.22 255.255.255.252
+no shut
+int g0/0
+ip address 192.168.10.1 255.255.255.0
+no shut
+exit
+
+HQ:
+enable
+config t
+no ip domain-lookup
+int s0/0/0
+ip address 209.165.201.18 255.255.255.252
+no shut
+int g0/0
+ip address 192.168.30.1 255.255.255.0
+no shut
+exit
+
+Configure HQ to use SSH for remote access:
+HQ:
+enable
+config t
+username admin password secureaccess
+ip domain-name CISCO.com
+ip ssh version 2
+ip ssh time-out 60
+ip ssh authentication-retries 2
+crypto key generate rsa
+2048
+end
+
+Configure the VTY lines to allow SSH only:
+HQ:
+config t
+line vty 0 4
+login local
+transport input ssh
+
+(To verify SSH use the #show ip ssh OR #show ssh command)
+
+Configure the WAN Link from Branch to ISP-3 using PPP encapsulation and CHAP authentication:
+Branch:
+config t
+username ISP-3 password cisco
+int s0/0/0
+encapsulation ppp
+ppp authentication chap
+exit
+ 
+Configure the WAN link from HQ to the ISP-2 router using PPP encapsulation and CHAP authentication:
+HQ:
+config t
+username ISP-2 password cisco
+int s0/0/0
+encapsulation ppp
+ppp authentication chap
+exit
+
+On BRANCH, configure a DHCP pool for the BRANCH LAN:
+BRANCH:
+config t
+ip dhcp pool LAN
+network 192.168.10.0 255.255.255.0
+default-router 192.168.10.1
+dns-server 192.168.30.250
+ip dhcp excluded-address 192.168.10.1 192.168.10.5
+exit
+
+On HQ, configure a DHCP pool for the HQ LAN:
+HQ:
+config t
+ip dhcp pool LAN
+network 192.168.30.0 255.255.255.0
+default-router 192.168.30.1
+dns-server 192.168.30.250
+ip dhcp excluded-address 192.168.30.1 192.168.30.10
+exit
+
+Configure REMOTE with a default route to the ISP-1 router. Use the Next-Hop IP as an argument:
+REMOTE:
+config t
+ip route 0.0.0.0 0.0.0.0 209.165.201.1
+
+Configure BRANCH with eBGP routing:
+BRANCH:
+enable
+config t
+router bgp 65010
+network 192.168.10.0 mask 255.255.255.0
+neighbor 209.165.201.21 remote-as 65535
+end
+
+Configure HQ with eBGP routing:
+HQ:
+enable
+config t
+router bgp 65020
+network 192.168.30.0 mask 255.255.255.0
+neighbor 209.165.201.17 remote-as 65535
+end
+
+Configure REMOTE with a tunnel interface to send IP traffic over GRE to HQ:
+REMOTE:
+config t
+int tunnel10
+ip address 10.1.1.1 255.255.255.252
+tunnel source serial 0/0/0
+tunnel destination 209.165.201.18
+exit
+
+
+Configure HQ with a tunnel interface to send IP traffic over GRE to REMOTE
+HQ:
+config t
+int tunnel10
+ip address 10.1.1.2 255.255.255.252
+tunnel source serial 0/0/0
+tunnel destination 209.165.201.2
+exit
+
+
+OSPF Routing - Configure OSPF across the GRE tunnel:
+REMOTE:
+config t
+router ospf 100
+network 192.168.20.0 0.0.0.255 area 0
+network 10.1.1.0 0.0.0.3 area 0
+passive-interface g0/0
+exit
+
+OSPF Routing - Configure OSPF across the GRE tunnel:
+HQ:
+config t
+router ospf 100
+network 192.168.30.0 0.0.0.255 area 0
+network 10.1.1.0 0.0.0.3 area 0
+passive-interface g0/0
+exit

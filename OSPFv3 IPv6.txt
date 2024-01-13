@@ -1,0 +1,215 @@
+~Basic OSPFv3 for IPv6~
+
+Basic Config:
+R1:
+enable
+config t
+hostname R1
+no ip domain-lookup
+banner motd #Unauthorized Access is Prohibited#
+enable password cyber
+service password-encryption
+line vty 0 5
+logging synchronous
+password security
+exit
+ipv6 unicast-routing
+int G0/0
+ipv6 address 2001:DB8:CAFE:1::1/64
+ipv6 address FE80::1 link-local
+no shut
+int S0/0/0
+ipv6 address 2001:DB8:CAFE:A001::1/64
+ipv6 address FE80::1 link-local
+no shut
+int S0/0/1
+ipv6 address 2001:DB8:CAFE:A003::1/64
+ipv6 address FE80::1 link-local
+no shut
+end
+copy running-config startup-config
+
+R2:
+enable
+config t
+hostname R2
+no ip domain-lookup
+banner motd #Unauthorized Access is Prohibited#
+enable password cyber
+service password-encryption
+line vty 0 5
+logging synchronous
+password security
+exit
+ipv6 unicast-routing
+int G0/0
+ipv6 address 2001:DB8:CAFE:2::1/64
+ipv6 address FE80::2 link-local
+no shut
+int S0/0/0
+ipv6 address 2001:DB8:CAFE:A001::2/64
+ipv6 address FE80::2 link-local
+no shut
+int S0/0/1
+ipv6 address 2001:DB8:CAFE:A002::1/64
+ipv6 address FE80::2 link-local
+no shut
+end
+copy running-config startup-config
+
+R3:
+enable
+config t
+hostname R3
+no ip domain-lookup
+banner motd #Unauthorized Access is Prohibited#
+enable password cyber
+service password-encryption
+line vty 0 5
+logging synchronous
+password security
+exit
+ipv6 unicast-routing
+int G0/0
+ipv6 address 2001:DB8:CAFE:3::1/64
+ipv6 address FE80::3 link-local
+no shut
+int S0/0/0
+ipv6 address 2001:DB8:CAFE:A003::2/64
+ipv6 address FE80::3 link-local
+no shut
+int S0/0/1
+ipv6 address 2001:DB8:CAFE:A002::2/64
+ipv6 address FE80::3 link-local
+no shut
+end
+copy running-config startup-config
+
+
+OSPFv3 Assign router IDs:
+
+R1:
+config t
+ipv6 router ospf 1 (Note: You might receive a short response but the next line will fix)
+router-id 1.1.1.1
+ 
+R2:
+config t
+ipv6 router ospf 1
+router-id 2.2.2.2
+
+R3:
+config t
+ipv6 router ospf 1
+router-id 3.3.3.3
+
+(Use "#show ipv6 ospf" command to verify the router IDs)
+
+
+Configure OSPFv6:
+
+(Issue the "#ipv6 ospf 1 area 0" command for each interface that is to participate in OSPFv3 routing)
+Example:
+R1(config)# interface g0/0 
+R1(config-if)# ipv6 ospf 1 area 0 
+R1(config-if)# interface s0/0/0 
+R1(config-if)# ipv6 ospf 1 area 0 
+R1(config-if)# interface s0/0/1 
+R1(config-if)# ipv6 ospf 1 area 0
+------------------------------------------
+
+R1:
+config t
+int g0/0
+ipv6 ospf 1 area 0 
+int s0/0/0
+ipv6 ospf 1 area 0 
+int s0/0/1
+ipv6 ospf 1 area 0
+
+R2:
+config t
+int g0/0
+ipv6 ospf 1 area 0 
+int s0/0/0
+ipv6 ospf 1 area 0 
+int s0/0/1
+ipv6 ospf 1 area 0
+
+R3:
+config t
+int g0/0
+ipv6 ospf 1 area 0 
+int s0/0/0
+ipv6 ospf 1 area 0 
+int s0/0/1
+ipv6 ospf 1 area 0
+
+
+("#show ipv6 ospf neighbor" will verify the router has formed an adjacency with neighboring routers)
+("#show ipv6 protocols" will verify OSPFv3 config, process ID, router ID, and interfaces with OSPFv3 enabled)
+("#show ipv6 ospf interface" displays detailed list for every OSPF enabled interface)
+("#show ipv6 route" will verify all networks are appearing in the routing table)
+
+Configure OSPFv3 Passive Interfaces:
+
+R1:
+config t
+ipv6 router ospf 1
+passive-interface g0/0
+
+("#show ipv6 ospf interface g0/0" will verify that int g0/0 is passive)
+
+
+Set passive interface as the default on the router:
+
+R2:
+config t
+ipv6 router ospf 1
+passive-interface default
+(^This makes all interfaces passive which does not allow routing information to be advertised)
+
+We fix by using the following commands:
+
+R2(config)#ipv6 router ospf 1
+R2(config-rtr)#no passive-interface s0/0/1
+R2(config-rtr)#no passive-interface s0/0/0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,155 @@
+Rip Routing with IPv4
+
+~Basic Router Config~
+
+Router-A:
+
+enable
+config t
+no ip domain-lookup
+enable password security
+line vty 0 5
+password cyber
+login
+exit
+
+config t
+int g0/1
+ip address 204.15.5.97 255.255.255.240
+no shutdown
+exit
+
+int s0/0/0
+ip address 204.15.5.66 255.255.255.240
+no shutdown
+exit
+
+Router-B:
+
+enable
+config t
+no ip domain-lookup
+enable password security
+line vty 0 5
+password cyber
+login
+exit
+
+config t
+int s0/0/1
+ip address 204.15.5.65 255.255.255.240
+no shutdown
+exit
+
+int s0/0/0
+ip address 204.15.5.50 255.255.255.240
+no shutdown
+exit
+
+Router-C:
+
+enable
+config t
+no ip domain-lookup
+enable password security
+line vty 0 5
+password cyber
+login
+exit
+
+config t
+int s0/0/1
+ip address 204.15.5.49 255.255.255.240
+no shutdown
+exit
+
+int g0/1
+ip address 204.15.5.33 255.255.255.240
+no shutdown
+exit
+
+~Configuring RIP (Distance Vector) Routing~
+
+Router-A:
+
+config t
+router rip
+network 204.15.5.96
+network 204.15.5.64
+exit
+
+
+Router-B: 
+config t
+router rip
+network 204.15.5.64
+network 204.15.5.48
+exit
+
+Router-C: 
+config t
+router rip
+network 204.15.5.32
+network 204.15.5.48
+exit
+
+Save running config: #copy running-config startup-config
+(applied to routers A, B, C)
+
+Remove routing protocol: config# no router rip
+
+
+~Ripv2 Routing Protocol~
+
+Router-A:
+
+config t
+router rip
+version 2
+no auto summary
+network 204.15.5.96
+network 204.15.5.64
+exit
+
+Router-B:
+
+config t
+router rip
+version 2
+no auto summary
+network 204.15.5.64
+network 204.15.5.48
+exit
+
+Router-C:
+
+config t
+router rip
+version 2
+no auto summary
+network 204.15.5.32
+network 204.15.5.48
+exit
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

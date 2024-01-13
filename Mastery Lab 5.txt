@@ -1,0 +1,62 @@
+
+Branch:
+enable
+config t
+no ip domain-lookup
+ipv6 unicast-routing
+int g0/0
+ip address 172.16.159.254 255.255.240.0
+ipv6 address 2001:DB8:ACAD:B1::1/64
+no shut
+int g0/1
+ip address 172.16.143.254 255.255.240.0
+ipv6 address 2001:DB8:ACAD:B2::1/64
+no shut
+exit
+router ospf 1
+network 192.168.0.0 0.0.0.3 area 0
+network 172.16.128.0 0.0.0.15 area 0
+network 172.16.144.0 0.0.0.15 area 0
+passive-interface g0/0
+passive-interface g0/1
+exit
+ip access-list extended HQServer
+deny ip any host 172.16.0.1
+permit ip any any
+int g0/0
+ip access-group HQServer in
+exit
+ipv6 access-list NO-B1
+deny ipv6 host 2001:DB8:ACAD:B1::2 host 2001:DB8:ACAD:B2::3
+permit ipv6 any any
+int g0/0
+ipv6 traffic-filter acl-NO-B1 in
+end
+
+
+HQ:
+enable
+config t
+router ospf 1
+network 192.168.0.0 0.0.0.3 area 0
+network 172.16.64.0 0.0.63.255 area 0
+network 172.16.0.0 0.0.63.255 area 0
+passive-interface g0/0
+passive-interface g0/1
+exit
+ip route 0.0.0.0 0.0.0.0 s0/0/1
+router ospf 1
+default-information originate               
+exit
+ip access-list extended BranchServer
+deny tcp any host 172.16.128.1 eq 80
+deny tcp any host 172.16.128.1 eq 443
+permit ip any any
+int g0/0
+ip access-group BranchServer in
+end
+
+
+
+
+

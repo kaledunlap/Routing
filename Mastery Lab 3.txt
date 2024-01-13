@@ -1,0 +1,90 @@
+R1:
+enable
+config t
+no ip domain-lookup
+int g0/0
+ip address 172.31.0.1 255.255.254.0
+no shut
+int s0/0/1 
+ip address 172.31.4.1 255.255.255.252
+no shut
+exit
+router eigrp 1
+eigrp router-id 1.1.1.1
+network 172.31.0.0 0.0.1.255
+network 172.31.4.0 0.0.0.3
+passive-interface g0/0
+exit
+
+R2:
+enable
+config t
+no ip domain-lookup
+ipv6 unicast-routing
+int g0/0
+ip address 172.31.2.1 255.255.254.0
+ipv6 address 2001:DB8:1::1/64
+ipv6 address FE80::1 link-local 
+no shut
+int s0/0/0
+ip address 172.31.4.2 255.255.255.252
+no shut
+int s0/0/1
+ipv6 address 2001:DB8:2::1/64
+no shut
+exit
+router eigrp 1
+eigrp router-id 2.2.2.2
+passive-interface g0/0
+ipv6 router eigrp 1
+eigrp router-id 2.2.2.2
+no shut
+exit
+int s0/0/1
+ipv6 eigrp 1
+int s0/0/0
+ipv6 eigrp 1
+int g0/0
+ipv6 eigrp 1
+exit
+router eigrp 1
+network 172.31.4.0 0.0.0.3
+network 172.31.2.0 0.0.1.255
+exit
+
+
+R3:
+enable
+config t
+no ip domain-lookup
+ipv6 unicast-routing
+int g0/0
+ipv6 address 2001:DB8:3::1/64
+ipv6 address FE80::3 link-local
+no shut
+int s0/0/0
+ipv6 address 2001:DB8:2::2/64
+no shut
+exit
+ipv6 router eigrp 1
+no shutdown
+eigrp router-id 3.3.3.3
+exit
+int s0/0/0
+ipv6 eigrp 1
+int g0/0
+ipv6 eigrp 1
+exit
+
+
+
+
+
+
+
+
+
+
+
+
+

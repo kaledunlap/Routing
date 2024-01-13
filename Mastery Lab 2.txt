@@ -1,0 +1,178 @@
+	Main Campus Router:
+Basic Routing/Config:
+enable
+config t
+hostname MainCampusR
+no ip domain-lookup
+line con 0
+password cyber
+login
+enable password security
+int s0/0/0
+ip address 172.16.1.1 255.255.255.252
+no shutdown
+int g0/0
+ip address 209.165.200.226 255.255.255.252
+no shutdown
+end
+
+	Admin Building Router:
+Basic Routing/Config:
+enable
+config t
+hostname AdminBldgR
+no ip domain-lookup
+line con 0
+password cyber
+login
+enable password security
+int s0/0/0
+ip address 172.16.1.2 255.255.255.252
+no shutdown
+int s0/0/1
+ip address 172.16.2.2 255.255.255.252
+no shutdown
+int g0/0 
+ip address 192.168.10.129 255.255.255.192
+no shutdown
+int g0/1
+ip address 192.168.10.1 255.255.255.128
+no shutdown
+end
+
+
+	Cyber Lab Router
+Basic Routing/Config:
+enable
+config t
+hostname CyberlabR
+no ip domain-lookup
+line con 0
+password cyber
+login
+enable password security
+int s0/0/1
+ip address 172.16.2.1 255.255.255.252
+no shutdown
+int g0/0.100
+encapsulation dot1q 10
+ip address 192.168.10.225 255.255.255.240
+no shut
+int g0/0.500
+encapsulation dot1q 20
+ip address 192.168.10.193 255.255.255.224
+no shut
+end
+
+	Admin Switch 1st Floor
+Basic Routing/Config:
+enable
+config t
+hostname Admin-Fl-1
+line con 0
+password cyber
+login
+enable password security
+end
+
+	Admin Switch 2nd Floor
+Basic Routing/Config:
+enable
+config t
+hostname Admin-Fl-2
+line vty 0 5
+password cyber
+login
+enable password security
+end
+
+	Cyber Lab Switch
+Basic Routing/Config:
+enable
+config t
+hostname Cyberlab-SW
+line vty 0 5
+password cyber
+login
+enable password security
+vlan 100
+vlan 500
+exit
+int fa 0/2
+switchport access vlan 100
+int fa 0/5
+switchport access vlan 100
+int fa 0/10
+switchport access vlan 500
+int fa 0/11
+switchport access vlan 500
+int fa 0/1
+switchport mode trunk
+end
+
+	PCs & Server:
+VLAN 100s: 
+File server: Last usable = 192.168.10.230
+PC-101: 2nd to last usable = 192.168.10.229
+
+VLAN 500s:
+PC-501: 2nd Last usable = 192.168.10.221
+PC-502: Last usable = 192.168.10.222
+
+
+Configuring RIP/RIPv2 Routing Protocol:
+
+	Main Campus Router:
+config t
+router rip
+version 2
+no auto summary
+network 172.16.1.0
+exit
+
+	Admin Building Router:
+config t
+router rip
+version 2
+no auto summary
+network 192.168.10.128
+network 192.168.10.0
+network 172.16.1.0
+network 172.16.2.1
+passive-interface g0/0
+passive-interface g0/1
+exit
+
+	Cyber Lab Router:
+config t
+router rip
+version 2
+no auto summary
+network 172.16.2.1
+network 192.168.10.192
+exit
+
+
+Configure next hop static route:
+
+	Admin Building Router:
+config t
+ip route 192.168.10.224 255.255.255.248 172.16.2.1
+
+
+Configure static routes:
+
+	Main Campus Router:
+config t
+ip route 0.0.0.0 0.0.0.0 g0/0
+end
+
+	Admin Building Router:
+config t
+ip route 0.0.0.0 0.0.0.0 s0/0/0
+end
+
+	Cyber Lab Router:
+config t
+ip route 0.0.0.0 0.0.0.0 s0/0/1
+end

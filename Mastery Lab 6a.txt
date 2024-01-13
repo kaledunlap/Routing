@@ -1,0 +1,18 @@
+Step 1: Configure eBGP in ACME Inc:
+ACME1:
+enable
+config t
+router bgp 65001
+network 192.168.0.0 mask 255.255.255.0
+neighbor 1.1.1.1 remote-as 65003
+end
+
+Step 2: Configure eBGP in Other Company Inc:
+OtherCo1:
+enable
+config t
+router bgp 65002
+network 172.16.10.0 mask 255.255.255.0
+neighbor 1.1.1.9 remote-as 65003
+end
+

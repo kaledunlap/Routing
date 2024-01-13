@@ -1,0 +1,129 @@
+IPv6 IP Routing
+
+Allow login to telnet sessions on all 5 telnet lines:
+
+config t
+line vty 0 5
+password cyber
+login
+exit
+
+BASIC INTERFACE ADDRESSING CONFIG:
+
+McAllen Router:
+
+config t
+ipv6 unicast-routing
+int g0/0
+ipv6 address 2001:FFFF:1:8::9/64
+ipv6 address FE80::1 link-local 
+no shutdown
+exit
+
+
+int s0/0/0
+ipv6 address 1920:1616:1:16::17/64 
+ipv6 address FE80::1 link-local
+no shutdown
+exit
+
+Houston Router:
+
+config t
+ipv6 unicast-routing
+int g0/0
+ipv6 address 2001:FFFF:2:8::9/64 
+ipv6 address FE80::2 link-local
+no shutdown
+exit
+
+int s0/0/0
+ipv6 address 1920:1616:2:16::17/64 
+ipv6 address FE80::2 link-local
+no shutdown
+exit
+
+int s0/0/1
+ipv6 address 1920:1616:1:16::18/64
+ipv6 address FE80::2 link-local
+no shutdown
+exit
+
+Abilene Router:
+
+config t
+ipv6 unicast-routing
+int g0/0
+ipv6 address 2001:FFFF:3:8::9/64 
+ipv6 address FE80::3 link-local
+no shutdown
+exit
+
+int s0/0/1
+ipv6 address 1920:1616:2:16::18/64 
+ipv6 address FE80::3 link-local
+no shutdown
+exit
+
+IPv6 ROUTING
+
+RouterB(config)#ipv6 route 2001:1600:ACAD:10::/64  2001:1600:ACAD:20::2
+                           Destination   Subnet Mask  Next Hop Address
+
+
+McAllen Routing:
+
+config t
+ipv6 unicast-routing
+ipv6 route 2001:FFFF:2:8::/64 1920:1616:1:16::18
+ipv6 route 1920:1616:2:16::/64 1920:1616:1:16::18
+ipv6 route 2001:FFFF:3:8::/64 1920:1616:1:16::18
+exit
+
+Houston Routing:
+
+config t
+ipv6 unicast-routing
+ipv6 route 2001:FFFF:1:8::/64 1920:1616:1:16::17
+ipv6 route 2001:FFFF:3:8::/64 1920:1616:2:16::18
+exit
+
+Abilene Routing:
+
+config t
+ipv6 unicast-routing
+ipv6 route 2001:FFFF:2:8::/64 1920:1616:2:16::17
+ipv6 route 1920:1616:1:16::/64 1920:1616:2:16::17
+ipv6 route 2001:FFFF:1:8::/64 1920:1616:2:16::17
+exit
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

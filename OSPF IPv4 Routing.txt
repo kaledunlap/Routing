@@ -1,0 +1,183 @@
+OSPF
+
+R1:
+enable
+config t
+hostname R1
+no ip domain-lookup
+enable password security
+line con 0
+password cyber
+logging synchronous
+line vty 0 5
+password cyber
+logging synchronous
+exit
+banner motd #Unauthorized Access is Prohibited#
+
+int g0/0
+ip address 172.16.1.1 255.255.255.0
+no shut
+int s0/0/0
+ip address 172.16.3.1 255.255.255.252
+no shut
+int s0/0/1
+ip address 192.168.10.5 255.255.255.252
+no shut
+end
+copy running-config startup-config
+
+
+R2:
+enable
+config t
+hostname R2
+no ip domain-lookup
+enable password security
+line con 0
+password cyber
+logging synchronous
+line vty 0 5
+password cyber
+logging synchronous
+exit
+banner motd #Unauthorized Access is Prohibited#
+
+int g0/0
+ip address 172.16.2.1 255.255.255.0
+no shut
+int s0/0/0
+ip address 172.16.3.2 255.255.255.252
+no shut
+int s0/0/1
+ip address 192.168.10.9 255.255.255.252
+no shut
+int s0/1/0
+ip address 209.165.200.225 255.255.255.224
+no shut
+end
+copy running-config startup-config
+
+
+R3:
+enable
+config t
+hostname R3
+no ip domain-lookup
+enable password security
+line con 0
+password cyber
+logging synchronous
+line vty 0 5
+password cyber
+logging synchronous
+exit
+banner motd #Unauthorized Access is Prohibited#
+
+int g0/0
+ip address 192.168.1.1 255.255.255.0
+no shut
+int s0/0/0
+ip address 192.168.10.6 255.255.255.252
+no shut
+int s0/0/1 
+ip address 192.168.10.10 255.255.255.252
+no shut
+end
+copy running-config startup-config
+
+
+
+Configure and Verify OSPF Routing:
+
+R1:
+config t
+router ospf 1
+network 172.16.1.0 0.0.0.255 area 0
+network 172.16.3.0 0.0.0.3 area 0
+network 192.168.10.4 0.0.0.3 area 0
+end
+
+R2:
+config t
+router ospf 1
+network 172.16.2.0 0.0.0.255 area 0
+network 172.16.3.0 0.0.0.3 area 0
+network 192.168.10.8 0.0.0.3 area 0
+end
+
+R3:
+config t
+router ospf 1
+network 192.168.1.0 0.0.0.255 area 0
+network 192.168.10.4 0.0.0.3 area 0
+network 192.168.10.8 0.0.0.3 area 0
+end
+
+Wildcard Mask Example:
+(Subtract mask from 255.255.255.255)
+/27 =
+255. 255. 255. 255
+255. 255. 255. 224
+0  .  0 .  0 . 31  = wildcard mask
+
+
+Configure a passive interface:
+
+R1:
+config t
+router ospf 1
+passive-interface g0/0
+end
+
+R2:
+config t
+router ospf 1
+passive-interface g0/0
+end
+
+R3:
+config t
+router ospf 1
+passive-interface g0/0
+end
+
+
+Propagating a Default Route in OSPF:
+
+R2:
+config t
+ip route 0.0.0.0 0.0.0.0 s0/1/0
+router ospf 1                
+default-information originate
+
+The last 2 lines propagate the default route in OSPF.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
