@@ -1,6 +1,6 @@
-IPv6 IP Routing
+IPv6 IP Routing:
 
-Allow login to telnet sessions on all 5 telnet lines:
+Allowing login to telnet sessions on all 5 telnet lines:
 
 config t
 line vty 0 5
@@ -65,7 +65,7 @@ ipv6 address FE80::3 link-local
 no shutdown
 exit
 
-IPv6 ROUTING
+IPv6 ROUTING:
 
 RouterB(config)#ipv6 route 2001:1600:ACAD:10::/64  2001:1600:ACAD:20::2
                            Destination   Subnet Mask  Next Hop Address
